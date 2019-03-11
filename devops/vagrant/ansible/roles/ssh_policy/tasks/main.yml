@@ -1,0 +1,81 @@
+---
+- name: Remove all AllowUsers lines from sshd config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowUsers"
+    state: absent
+  tags: ssh_policy
+
+- name: Grant ssh access to specific users only
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    line: "AllowUsers {{ ssh_policy_allow_users | join(' ') }}"
+    state: present
+  tags: ssh_policy
+
+- name: Ensure root user is permitted to login (if granted access)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin yes"
+    state: present
+  tags: ssh_policy
+
+- name: Ensure password authentication is not allowed
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  tags: ssh_policy
+
+- name: Reduce login grace time
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^LoginGraceTime"
+    line: "LoginGraceTime {{ ssh_policy_login_grace_time }}"
+    state: present
+  tags: ssh_policy
+
+- name: Disable TrustedUserCAKeys
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^TrustedUserCAKeys"
+    state: absent
+  tags: ssh_policy
+
+- name: Disable UseDNS
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^UseDNS"
+    line: "UseDNS no"
+    state: present
+  tags: ssh_policy
+
+- name: Disable X11 forwarding
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^X11Forwarding"
+    line: "X11Forwarding no"
+    state: present
+  tags: ssh_policy
+
+- name: Allow TCP forwarding
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowTcpForwarding"
+    line: "AllowTcpForwarding yes"
+    state: present
+  tags: ssh_policy
+
+- name: Allow Agent forwarding
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowAgentForwarding"
+    line: "AllowAgentForwarding yes"
+    state: present  
+  tags: ssh_policy
+
+- name: Restart SSH
+  service: name=sshd state=restarted
+  tags: ssh_policy

@@ -1,0 +1,93 @@
+---
+- name: Provision dev machine
+  hosts: host0
+  become: true
+
+  vars_files:
+    - /vagrant/ansible.conf.yml
+
+  vars:
+    samba_share_user: "{{ user_account_name }}"
+    samba_share_group: "{{ user_account_group }}"
+    samba_shares:
+      - {name: "gitrepos", path: "{{ git_repos_parent_path }}"}
+
+    # IMPORTANT:
+    # SAMBA shares are not authenticated - any host on the same subnet can access them.
+    samba_bind_interfaces:
+      - "lo"
+      - "{{ internal_iface }}"
+
+    samba_hosts_allow:
+      - "127.0.0.1"
+      - "{{ internal_net }}"
+
+  roles:
+    - samba
+
+    - role: iptables
+      tags: samba
+      iptables_unit:
+        suffix: "samba"
+        rules:
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            dport: "137:139"
+            extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
+            action: "ACCEPT"
+
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            proto: "udp"
+            dport: "137:139"
+            extra: "-m conntrack --ctstate NEW"
+            action: "ACCEPT"
+
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            dport: "445"
+            extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
+            action: "ACCEPT"
+
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            proto: "udp"
+            dport: "445"
+            extra: "-m conntrack --ctstate NEW"
+            action: "ACCEPT"
+
+
+    - role: iptables
+      tags: www
+      iptables_unit:
+        suffix: "nginx"
+        rules:
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            dport: 80
+            extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
+            action: 'ACCEPT'
+
+
+    - role: iptables
+      tags: flask
+      iptables_unit:
+        suffix: "nginx"
+        rules:
+          - iface: "{{ internal_iface }}"
+            src: "{{ internal_net }}"
+            dport: 5000
+            extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
+            action: 'ACCEPT'
+
+  tasks:
+    - import_tasks: tasks/git.yml
+      tags: git
+
+    - name: Add ansible to user PATH
+      lineinfile:
+        path: "{{ user_account_home_dir }}/.profile"
+        insertafter: '^PATH="\$HOME\/bin*.?'
+        line: 'export PATH="$PATH:{{ ansible_venv_path }}/bin"'
+        state: present
+      tags: ansible

@@ -1,0 +1,29 @@
+# Configuring {{ iptables_unit.suffix }} rules (priority {{ iptables_unit.priority|default(iptables_default_script_priority) }})
+{% for rule in iptables_unit.rules %}
+{% if rule.comment is defined %}# {{ rule.comment }} {% endif %}
+
+{% if rule.raw is defined %}
+{{ rule.raw }}
+{% else %}
+{% for dport in rule.dports|default([rule.dport]) %}
+-{{rule.position|default("A")}} {{rule.chain|default("INPUT")}}
+{%- if rule.iface is defined %}
+ -i {{rule.iface}}
+{%- endif %}
+ -p {{rule.proto|default("tcp")}} --dport {{dport}}
+{%- if rule.dst is defined %}
+ -d {{rule.dst}}
+{%- endif %}
+{%- if rule.sport is defined %}
+ --sport {{rule.sport}}
+{%- endif %}
+{%- if rule.src is defined %}
+ -s {{rule.src}}
+{%- endif %}
+{%- if rule.extra is defined %}
+ {{rule.extra}}
+{%- endif %}
+ -j {{rule.action}}
+{% endfor %}
+{% endif %}
+{% endfor %}

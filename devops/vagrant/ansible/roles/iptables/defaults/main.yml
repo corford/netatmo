@@ -1,0 +1,12 @@
+---
+iptables_rule_loader_script_path: "/etc/iptables.d/loader"
+iptables_rules_parent_path: /etc/iptables.d
+iptables_default_ip_version: 4
+iptables_default_script_priority: 30
+iptables_default_table: "filter"
+iptables_table_priorities:
+  security: "00"
+  raw: "10"
+  nat: "20"
+  mangle: "30"
+  filter: "40"

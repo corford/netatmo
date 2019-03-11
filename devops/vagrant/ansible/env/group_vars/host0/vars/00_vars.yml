@@ -1,0 +1,6 @@
+---
+ansible_venv_path: "/opt/venvs/ansible" # Should have already been setup during initial vagrant machine provisioning
+
+git_clone_repos: 
+  - src: "ssh://git@github.com/corford/netatmo.git"
+    name: netatmo

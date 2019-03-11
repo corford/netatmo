@@ -1,0 +1,29 @@
+---
+- name: Write hostname
+  copy: content={{ inventory_hostname }} dest=/etc/hostname owner=root group=root mode=0644
+  tags: hosts
+
+- name: Update hostname
+  command: hostnamectl set-hostname {{ inventory_hostname }}
+  tags: hosts
+
+- name: Write default hosts file
+  template:
+    src: "../templates/hosts.j2"
+    dest: "/etc/hosts"
+    owner: root
+    group: root
+    mode: 0644
+  tags: hosts
+
+- name: Add vagrant guests
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: '.*{{ hostvars[item].inventory_hostname }}$'
+    line: "{{ hostvars[item]['ansible_' + internal_iface]['ipv4']['address'] }} {{ (hostvars[item].inventory_hostname == hostvars[item].inventory_hostname_short) | ternary(hostvars[item].inventory_hostname, hostvars[item].inventory_hostname + ' ' + hostvars[item].inventory_hostname_short) }}"
+    state: present
+    backup: yes
+  when: (hostvars[item]['ansible_' + internal_iface]['ipv4']['address'] is defined)
+  with_items:
+    - "{{ ansible_play_batch }}"
+  tags: hosts

@@ -1,0 +1,20 @@
+---
+- name: Silence login greeting for root
+  file:
+    path: /root/.hushlogin
+    state: touch
+    mode: "0600"
+  when: ansible_distribution == "Ubuntu"
+
+- name: Set nano as default editor for root
+  lineinfile:
+    path: "/root/.profile"
+    line: 'export EDITOR="/bin/nano"'
+    state: present
+
+- name: Change default nano tabsize
+  lineinfile:
+    path: "/etc/nanorc"
+    regexp: ".*tabsize.*"
+    line: "set tabsize 4"
+    state: present

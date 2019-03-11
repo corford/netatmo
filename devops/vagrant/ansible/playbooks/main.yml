@@ -1,0 +1,6 @@
+---
+- import_playbook: common/main.yml
+  tags: common
+
+- import_playbook: host0/main.yml
+  tags: host0

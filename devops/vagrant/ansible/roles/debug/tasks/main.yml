@@ -1,0 +1,9 @@
+---
+- debug:
+    msg: "{{ group_names | to_nice_json }}"
+    
+- debug:
+    msg: "{{ groups | to_nice_json }}"
+
+- debug:
+    msg: "{{ hostvars | to_nice_json }} "

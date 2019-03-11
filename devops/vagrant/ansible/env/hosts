@@ -1,0 +1,8 @@
+[nodes]
+host0.dev.test ansible_ssh_host=localhost ansible_connection=local
+
+[host0]
+host0.dev.test
+
+[hosts:children]
+host0

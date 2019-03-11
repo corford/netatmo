@@ -1,0 +1,6 @@
+*.pyc
+**/.vagrant/
+**/vagrant/ansible.conf.yml
+**/vagrant/id_rsa.pub
+**/vagrant/ansible/.imported_roles/
+**/vagrant/ansible/**/*.retry

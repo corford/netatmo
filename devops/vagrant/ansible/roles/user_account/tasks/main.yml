@@ -1,0 +1,71 @@
+---
+- name: "Create group: {{ user_account_group }}"
+  group: name={{ user_account_group }} state=present
+  tags: user_account
+
+- name: "Create user: {{ user_account_name }}"
+  user:
+    name: "{{ user_account_name }}"
+    shell: /bin/bash
+    group: "{{ user_account_group }}"
+    home: "{{ user_account_home_dir }}"
+    state: present
+  tags: user_account
+
+- name: Grant passwordless sudo to {{ user_account_name }}
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: '^{{ user_account_name }} ALL='
+    line: '{{ user_account_name }} ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+    state: present    
+  tags: user_account
+
+- name: Read public key from {{ user_account_pubkey_src_path }}
+  slurp:
+      src: "{{ user_account_pubkey_src_path }}"
+  register: pubkey
+  tags: user_account
+
+- name: Set authorized public key
+  authorized_key:
+    user: "{{ user_account_name }}"
+    state: present
+    key: "{{ pubkey.content | b64decode }}"
+  tags: user_account
+
+- name: Grant ssh login to {{ user_account_name }}
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    line: "AllowUsers {{ user_account_name }}"
+    state: present
+  tags: user_account
+
+- name: Restart SSH
+  service: name=sshd state=restarted
+  tags: user_account
+
+- name: Silence ubuntu login greeting
+  file:
+    path: /{{ user_account_home_dir }}/.hushlogin
+    state: touch
+    mode: 0600
+  when: ansible_distribution == "Ubuntu"
+  tags: user_account
+
+- name: Set nano as default editor
+  lineinfile:
+    path: "{{ user_account_home_dir }}/.profile"
+    line: 'export EDITOR="/bin/nano"'
+    state: present
+  tags: user_account
+
+- name: Write gitconfig file
+  copy:
+    src: "{{ user_account_gitconfig_src_path }}"
+    dest: "{{ user_account_home_dir }}/.gitconfig"
+    remote_src: yes
+    owner: "{{ user_account_name }}"
+    group: "{{ user_account_group }}"
+    mode: 0600
+  when: (user_account_gitconfig_src_path != "")

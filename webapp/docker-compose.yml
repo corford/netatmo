@@ -1,0 +1,58 @@
+version: "3.7"
+services:
+  redis:
+    container_name: redis
+    restart: "no"
+    image: redis:alpine
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    networks:
+      - backend
+    volumes:
+      - type: volume
+        source: redis-data
+        target: /data
+        volume:
+          nocopy: true
+      - type: bind
+        source: ./redis.conf
+        target: /usr/local/etc/redis/redis.conf      
+    command: "redis-server /usr/local/etc/redis/redis.conf"
+  webapp:
+    container_name: webapp
+    restart: "no"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - type: bind
+        source: .
+        target: /webapp
+      - type: volume
+        source: app-data
+        target: /instance
+    depends_on:
+      - redis
+    environment:
+      - FLASK_ENV=development
+    entrypoint: "flask run -h 0.0.0.0 -p 5000"
+
+volumes:
+  redis-data:
+  app-data:
+
+networks:
+  frontend:
+  backend:
+    internal: true

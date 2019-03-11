@@ -1,0 +1,41 @@
+---
+ansible_python_interpreter: "/usr/bin/python3"
+ansible_ssh_common_args: "-o ForwardAgent=yes -o GSSAPIAuthentication=no -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null"
+ansible_control_path_dir: "~/.ssh/ansible-vagrant-"
+
+internal_iface: "eth1" # Host interface for internal network (used by ansible to locate correct IP address for hosts with multiple nics)
+internal_net: "192.168.56.0/24" # Connections with a source address in this IPv4 range will be treated as coming from internal hosts
+
+apt_base_packages:
+  - aptitude
+  - jq
+  - htop
+  - tree
+  - uuid
+  - pv
+  - man
+  - lsof
+  - zip
+  - rsync
+  - curl
+  - whois
+  - screen
+  - dnsutils
+  - ca-certificates
+  - socat  
+  - telnet
+  - tcpdump
+  - traceroute
+  - bsd-mailx
+  - apg
+  - git
+  - lftp
+  - python3-pexpect
+
+# Overriding these vars (e.g. in ansible.conf.yml) will cause a second user account to be created
+# in addition to the standard "vagrant" account
+user_account_name: "vagrant"
+user_account_group: "users"
+user_account_home_dir: "/home/vagrant"
+
+git_repos_parent_path: "/opt/gitrepos"

@@ -1,0 +1,12 @@
+---
+configs:
+    active: 'default'
+    default:
+        host0:
+            hostname: 'host0.dev.test' # The hostname here should match the one specified in the ansible inventory file
+            private_ip: '192.168.56.20' # You can access this vagrant box from the host using this address
+            blacklist_dhcpsrv_addr: '192.168.56.100' # This should be the Virtualbox host address that issues DHCP leases for the address range #{private_ip} is in
+            net_driver: 'Am79C970A'
+            memory_mb: 1024
+            vbox_gui: true
+            ssh_forward_agent: true

@@ -1,0 +1,10 @@
+---
+samba_shares: []
+samba_share_user: "vagrant"
+samba_share_group: "users"
+samba_workgroup: "WORKGROUP"
+samba_bind_interfaces:
+  - "lo"
+samba_hosts_allow:
+  - "127.0.0.1"
+

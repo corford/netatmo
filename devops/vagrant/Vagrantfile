@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'yaml'
+
+current_dir   = File.dirname(File.expand_path(__FILE__))
+confs         = YAML.load_file("#{current_dir}/vagrant.conf.yml")
+userconf      = confs['configs'][confs['configs']['active']]
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "dev_host0" do |machine|
+
+    machine.vm.box = "corford/bionic64-base"
+    machine.vm.box_version = "1.0.0"
+    machine.vm.network "private_network", ip: userconf['host0']['private_ip']
+    machine.vm.provider "virtualbox" do |vb, override|
+      vb.memory = userconf['host0']['memory_mb']
+      vb.gui = userconf['host0']['vbox_gui']
+      vb.customize ["modifyvm", :id, "--macaddress1", "auto"]
+      vb.customize ["modifyvm", :id, "--nictype1", userconf['host0']['net_driver']]
+      vb.customize ["modifyvm", :id, "--nictype2", userconf['host0']['net_driver']]
+    end
+    
+    machine.vm.hostname = userconf['host0']['hostname']
+    machine.ssh.forward_agent = userconf['host0']['ssh_forward_agent']
+    machine.vm.synced_folder ".", "/vagrant", :mount_options => ["dmode=775","fmode=664"]
+
+    machine.vm.provision "shell", path: "lib/dual_nic_dhcp_fix.sh", args: [userconf['host0']['blacklist_dhcpsrv_addr'], 'eth1']
+    machine.vm.provision "shell", path: "lib/iptables.sh"
+    machine.vm.provision "shell", path: "lib/provision.sh", args: ['/vagrant/ansible/requirements.yml']
+
+    # Finish provisioning with ansible
+    machine.vm.provision "ansible_local" do |ansible|
+      ansible.install  = false
+      ansible.compatibility_mode = "2.0"
+      ansible.provisioning_path = "/vagrant/ansible"
+      ansible.config_file = "ansible.cfg"
+      ansible.inventory_path = "env"
+      ansible.limit = "all"
+      ansible.playbook = "playbooks/main.yml"
+    end
+
+  end
+
+end

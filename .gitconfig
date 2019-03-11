@@ -1,0 +1,11 @@
+[core]
+	symlinks = true
+
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    hist = log --pretty=format:\"%h %ad | %s%d [%an / %ae]\" --graph --date=short
+    unstage = reset HEAD --
+    last = log -1 HEAD

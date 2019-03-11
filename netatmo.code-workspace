@@ -1,0 +1,16 @@
+{    
+	"settings": {
+      "python.linting.pylintEnabled": true,
+      "files.eol": "\n",
+      "git.enabled": true
+    },
+    
+	"folders": [
+		{
+			"path": "devops"
+		},
+		{
+			"path": "webapp"
+		}
+	]
+}

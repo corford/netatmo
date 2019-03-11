@@ -1,0 +1,5 @@
+---
+ssh_policy_login_grace_time: 60
+ssh_policy_allow_users:
+  - root
+  - vagrant

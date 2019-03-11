@@ -1,0 +1,8 @@
+# External/Galaxy roles
+#
+# Import new role definitions by issuing: ansible-galaxy install -r requirements.yml
+#
+
+- src: https://github.com/corford/ansible-role-docker
+  version: master
+  name: EXT.docker

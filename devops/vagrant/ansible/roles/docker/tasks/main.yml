@@ -1,0 +1,33 @@
+---
+- name: Install packages to allow apt to use a repository over HTTPS
+  apt:
+    name: "{{ docker_apt_repo_https_support_packages }}"
+    state: present
+    install_recommends: no
+    update_cache: yes
+    cache_valid_time: 3600
+  tags: docker
+
+- name: Add official docker repository signing key
+  apt_key:
+    url: "{{ docker_apt_repo_signing_key }}"
+    id: "{{ docker_apt_repo_signing_key_id }}"
+    state: present
+  tags: docker
+
+- name: Add docker repository
+  apt_repository:
+    repo: "{{ docker_apt_repo }}"
+    state: present
+  tags: docker
+
+- name: Install docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    update-cache: yes
+    state: present
+  tags: docker
+  

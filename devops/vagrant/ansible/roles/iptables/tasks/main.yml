@@ -1,0 +1,25 @@
+---
+- name: Iptables | Ensure rule loader script is present
+  template:
+    src: "templates/loader.j2"
+    dest: "{{ iptables_rule_loader_script_path }}"
+    owner: root
+    group: root
+    mode: 0700
+  register: iptables_loader_info       
+  tags: iptables
+
+- name: Iptables | Write {{ iptables_unit.suffix }} firewall rules
+  template:
+    src: "templates/rules.j2"
+    dest: "{{ iptables_rules_parent_path }}/ipv{{ iptables_unit.version|default(iptables_default_ip_version) }}/{{ iptables_table_priorities[iptables_unit.table|default(iptables_default_table)] }}_{{ iptables_unit.table|default(iptables_default_table) }}/{{ iptables_unit.priority|default(iptables_default_script_priority) }}_{{ iptables_unit.suffix }}.rules"
+    owner: root
+    group: root
+    mode: 0644
+  register: iptables_rules_info
+  tags: iptables
+
+- name: Iptables | Refresh iptables rules
+  shell: "{{ iptables_rule_loader_script_path }}"
+  when: (iptables_loader_info is changed) or (iptables_rules_info is changed)
+  tags: iptables

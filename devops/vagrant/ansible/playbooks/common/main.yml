@@ -1,0 +1,34 @@
+---
+- name: Common base machine setup
+  hosts: all
+  become: true
+
+  vars_files:
+    - /vagrant/ansible.conf.yml
+
+  pre_tasks:
+    - name: Ensure aptitude is available (needed to satisfy ansible apt module dependency)
+      apt: name=aptitude state=present
+      tags: packages
+      
+    - name: Install base packages from APT
+      apt:
+        name: "{{ apt_base_packages }}"
+        state: present
+        install_recommends: no
+        update_cache: yes
+        cache_valid_time: 3600
+      tags: packages
+
+  roles:
+    - hosts
+
+    - ssh_policy
+
+    - user_account
+
+    - EXT.docker
+
+  tasks:
+    - include_tasks: tasks/prefs.yml
+      tags: prefs

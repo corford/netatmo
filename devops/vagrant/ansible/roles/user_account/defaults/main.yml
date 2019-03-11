@@ -1,0 +1,6 @@
+---
+user_account_name: "vagrant" # Note: overwrite this via ansible.conf.yml if you want to change it
+user_account_group: "users"
+user_account_home_dir: "/home/vagrant" # Note: overwrite this via ansible.conf.yml if you want to change it
+user_account_pubkey_src_path: "/vagrant/id_rsa.pub"
+user_account_gitconfig_src_path: "/vagrant/gitconfig.txt" # Note: overwrite via ansible.conf.yml with an empty string if user does not have a gitconfig file

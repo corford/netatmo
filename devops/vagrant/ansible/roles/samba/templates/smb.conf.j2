@@ -1,0 +1,61 @@
+[global]
+
+#### Browsing/Identification ####
+
+workgroup = {{ samba_workgroup }}
+server string = %h server
+dns proxy = no
+
+#### Networking ####
+
+interfaces = {{ samba_bind_interfaces | join(" ") }}
+
+bind interfaces only = yes
+hosts deny = all
+
+# You may need to change the following line to correspond to your network address scheme
+hosts allow = {{ samba_hosts_allow | join(" ") }}
+
+#### Debugging/Accounting ####
+
+log file = /var/log/samba/log.%m
+max log size = 1000
+syslog only = no
+syslog = 0
+
+#### Authentication ####
+
+encrypt passwords = true
+passdb backend = tdbsam
+unix password sync = no
+pam password change = no
+map to guest = Bad User
+guest account = {{ samba_share_user }}
+
+#### Misc ####
+
+unix extensions = no
+socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+winbind enum groups = yes
+winbind enum users = yes
+printcap name = /etc/printcap
+load printers = no
+printing = cups
+printcap name = /dev/null
+disable spoolss = yes
+dos charset = CP850
+unix charset = UTF-8
+
+#### Share Definitions ####
+{% for share in samba_shares %}
+[{{ share.name }}]
+path = {{ share.path }}
+browsable = {{ share.browsable|default('yes') }}
+guest ok = yes
+guest only = yes
+read only = {{ share.read_only|default('no') }}
+directory mask = {{ share.dirmask|default('0755') }}
+create mask = {{ share.createmask|default('0644') }}
+follow symlinks = {{ share.follow_symlinks|default('yes') }}
+wide links = {{ share.wide_links|default('no') }}
+{% endfor %}

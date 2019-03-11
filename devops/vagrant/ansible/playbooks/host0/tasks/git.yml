@@ -1,0 +1,31 @@
+---
+- name: Add system gitconfig
+  template:
+    src: "../templates/gitconfig.j2"
+    dest: "/etc/gitconfig"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Ensure git repos parent path exists
+  file: path={{ git_repos_parent_path }} state=directory mode=0755 owner={{ user_account_name }} group={{ user_account_group }}
+
+- name: Clone git repositories
+  git:
+    repo: "{{ item.src }}"
+    version: "master"
+    dest: "{{ git_repos_parent_path }}/{{ item.name }}"
+    accept_hostkey: yes
+    update: yes
+    force: no
+  register: result
+  failed_when: ('failed' in result and result.failed == true and 'msg' in result and result.msg != 'Local modifications exist in repository (force=no).')
+  with_items: "{{ git_clone_repos }}"
+
+- name: Ensure correct ownership of git repositories
+  file:
+    path: "{{ git_repos_parent_path }}"
+    state: directory
+    owner: "{{ user_account_name }}"
+    group: "{{ user_account_group }}"
+    recurse: yes
