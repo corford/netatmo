@@ -1,0 +1,27 @@
+FROM python:3.7-alpine
+LABEL maintainer "Charlie Orford <email+docker@charlie.is>"
+
+RUN apk add --no-cache tini musl-dev gcc libffi-dev openssl-dev python3-dev
+
+RUN set -x ; \
+    addgroup -g 1001 -S flaskapp ; \
+    adduser -u 1001 -D -S -h /opt/flaskapp-instance -s /sbin/nologin -G flaskapp flaskapp ; \
+    chown root:flaskapp /opt/flaskapp-instance && exit 0 ; exit 1
+
+COPY --chown=root:flaskapp ./server /opt/flaskapp/
+COPY --chown=root:flaskapp ./.jwt /opt/flaskapp-instance/.jwt/
+
+RUN set -x ;\
+    chmod -R o=-wrx /opt/flaskapp ; \
+    chmod -R o=-wrx /opt/flaskapp-instance && exit 0 ; exit 1
+
+WORKDIR /opt/flaskapp
+RUN pip install --no-cache-dir -r requirements.txt
+USER flaskapp
+
+ENV FLASK_ENV=production
+
+EXPOSE 5000
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD [ "gunicorn", "-b", "0.0.0.0:5000", "--log-level", "INFO", "manage:app" ]

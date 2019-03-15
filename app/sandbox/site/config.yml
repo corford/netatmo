@@ -1,0 +1,34 @@
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: true
+baseUrl: "/" # Overrride by passing -b argument to hugo binary (e.g. via gulp build command)
+canonifyURLs: true
+enableRobotsTXT: false
+disableHugoGeneratorInject: true
+disableKinds:
+  - RSS
+  - taxonomy
+  - taxonomyTerm
+
+permalinks:
+  other: /:slug/
+
+sitemap:
+  filename: sitemap.xml
+  priority: 0.5
+
+languages:
+  en:
+    languageCode: en-gb
+    languageLang: en
+    languageName: English
+    title: API Sandbox
+    weight: 1
+    params:
+      page_title: API Sandbox
+      page_description: Simple test suite for flaskapp API
+
+title: API Sandbox
+params:
+  disableLanguageSwitchingButton: true
+  page_title: API Sandbox
+  page_description: Simple test suite for flaskapp API

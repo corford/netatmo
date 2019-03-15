@@ -4,3 +4,11 @@
 **/vagrant/id_rsa.pub
 **/vagrant/ansible/.imported_roles/
 **/vagrant/ansible/**/*.retry
+**/.env
+**/node_modules/
+**/sandbox/dist/
+**/sandbox/site/data/manifests/
+**/sandbox/site/public/
+**/sandbox/site/static/assets/css/
+**/sandbox/site/static/assets/js/
+**/sandbox/site/static/assets/font/

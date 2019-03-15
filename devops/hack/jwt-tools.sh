@@ -11,7 +11,7 @@ set -u
 # This is a convenience function for admins and not normally needed (since the
 # repo should already contain a dummy RS252 keypair for dev use)
 #
-function do_admin ()
+function do_newkeys ()
 {
   echo "Creating new dummy RS252 keypair (in DER and PEM format) for signing/verifying mock JWTs during development"
   openssl genpkey -algorithm RSA -outform DER -out ${1}/privkey.der -pkeyopt rsa_keygen_bits:4096
@@ -19,8 +19,8 @@ function do_admin ()
   openssl rsa -inform DER -outform PEM -in ${1}/privkey.der -out ${1}/privkey.pem
   openssl rsa -inform DER -outform PEM -in ${1}/privkey.der -out ${1}/pubkey.pem -pubout
   chmod 600 ${1}/privkey.der
-  chmod 600 ${1}/pubkey.der
-  chmod 644 ${1}/privkey.pem
+  chmod 644 ${1}/pubkey.der
+  chmod 600 ${1}/privkey.pem
   chmod 644 ${1}/pubkey.pem
 }
 
@@ -38,11 +38,14 @@ function do_install ()
 # Generates a dummy JWT to allow simulating authorisation with the flaskapp
 function do_create_token ()
 {
-  if [ ! -f "${1}" ]; then
+  if [ ! -f "${2}" ]; then
     echo "Error generating token (could not find private key: ${1})"
-
   else
-    jwt-cli encode -A RS256 -S @"${1}" -e $(date --date="1hour" +%s) -i "AuthN" -s $(uuidgen) '{"aud":["netatmo"]}'
+    if [ "${1}" = "admin" ]; then
+      jwt-cli encode -A RS256 -S @"${2}" -e $(date --date="1hour" +%s) -i "AuthN" -s "admin" '{"aud":"server:flaskapp", "admin":true}'
+    else
+      jwt-cli encode -A RS256 -S @"${2}" -e $(date --date="1hour" +%s) -i "AuthN" -s "joeblogs" '{"aud":"server:flaskapp", "admin":false}'
+    fi
   fi
 }
 
@@ -51,7 +54,6 @@ function do_decode_token ()
 {
   if [ ! -f "${1}" ]; then
     echo "Error decoding token (could not find public key: ${1})"
-
   else
     jwt-cli decode -A RS256 -S @"${1}" ${2}
   fi
@@ -62,14 +64,14 @@ function do_decode_token ()
 if [ "${1}" = "install" ]; then
   do_install
 
-elif [ "${1}" = "create" ]; then
-  do_create_token "${2}"
+elif [ "${1}" = "token" ]; then
+  do_create_token "${2}" "${3}"
 
 elif [ "${1}" = "decode" ]; then
   do_decode_token "${2}" "${3}"
 
-elif [ "${1}" = "admin" ]; then
-  do_admin "${2}"
+elif [ "${1}" = "newkeys" ]; then
+  do_newkeys "${2}"
 
 else
     : # Do nothing

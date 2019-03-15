@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="{{ $.Site.Language.Lang }}" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+    <base href="{{ $.Site.BaseURL }}">
+    <title>{{ index $.Params "page_title" | default ($.Param "page_title") }}</title>
+    <meta name="description" content="{{ index $.Params "page_description" | default ($.Param "page_description") }}">
+    <meta name="rating" content="General">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="skype_toolbar" content="skype_toolbar_parser_compatible">
+    <meta name="pinterest" content="nohover">
+    <meta name="pinterest" content="nopin">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-title" content="{{ $.Site.Title }}">
+    <link rel="stylesheet" href="/assets/css/{{ index $.Site.Data.manifests.css "main.css" }}">
+    <link rel="stylesheet" href="/assets/sprite/{{ index $.Site.Data.manifests.sprite "sprite.css" }}">
+
+    <!-- App -->
+    <script defer src="/assets/js/{{ index .Site.Data.manifests.js "runtime.js" }}"></script>
+    <script defer src="/assets/js/{{ index .Site.Data.manifests.js "vendor.js" }}"></script>
+    <script defer src="/assets/js/{{ index .Site.Data.manifests.js "app.js" }}"></script>
+  </head>
+  <body>
+    {{ block "page" . }}{{ end }}
+  </body>
+</html>

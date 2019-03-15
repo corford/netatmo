@@ -1,0 +1,82 @@
+.swal-modal {
+  z-index: $modal-z !important;
+}
+
+.swal-title {
+  font-family: $family-secondary;
+  font-weight: $weight-semibold;
+  font-size: $size-6;
+}
+
+.swal-content {
+  & p {
+    font-size: $size-normal;
+  }
+
+  & p + p {
+    padding-top: 1.5rem;
+  }
+
+  & p:last-child {
+    font-size: $size-small;
+  }
+}
+
+
+.swal-button {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  align-items: center;
+  border: $control-border-width solid transparent;
+  border-radius: $control-radius;
+  box-shadow: none;
+  display: inline-flex;
+  font-size: $size-normal;
+  height: $control-height;
+  position: relative;
+  vertical-align: top;
+
+  &:focus,
+  &.is-focused,
+  &:active,
+  &.is-active {
+    outline: none;
+  }
+  &[disabled] {
+    cursor: not-allowed;
+  }
+  background-color: $button-background-color;
+  border-color: $button-border-color;
+  border-width: $button-border-width;
+  color: $button-color;
+  cursor: pointer;
+  justify-content: center;
+  padding-bottom: $button-padding-vertical;
+  padding-left: $button-padding-horizontal;
+  padding-right: $button-padding-horizontal;
+  padding-top: $button-padding-vertical;
+  text-align: center;
+  white-space: nowrap;
+  font-family: $family-secondary;
+  font-weight: $weight-medium;
+  height: auto;
+  touch-action: manipulation;
+  line-height: 1.133;
+  transition: 150ms ease;
+  &:hover,
+  &.is-hovered {
+      &:not(:active) {
+          background-color: darken($button-background-color, 7%);
+      }
+  }
+  &:focus,
+  &.is-focused,
+  &:active,
+  &.is-active {    
+      box-shadow: none;
+  }
+  &:active,
+  &.is-active {
+      background-color: darken($button-background-color, 13%);
+  }
+}

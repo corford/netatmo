@@ -1,0 +1,8 @@
+.icon {
+  overflow: hidden;
+}
+
+.icon.is-tiny {
+  width: $icon-dimensions-tiny;
+  height: $icon-dimensions-tiny;
+}

@@ -1,0 +1,3 @@
+FLASK_APP=flaskapp
+FLASK_ENV=development
+UPSTREAM_PROXY_COUNT=0

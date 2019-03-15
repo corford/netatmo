@@ -1,0 +1,16 @@
+@mixin ultrahd() {
+  @if $ultrahd-enabled == true {
+    @media screen and (min-width: $ultrahd) {
+      @content;
+    }
+  }
+}
+
+@mixin until-ultrahd() {
+  @if $ultrahd-enabled == true {
+    @media screen and (max-width: $ultrahd - 1px) {
+      @content;
+    }
+  }
+}
+

@@ -1,0 +1,29 @@
+.columns.reverse-column-order-when-stacked-mobile {
+  @include mobile {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.columns.reverse-column-order-when-stacked-tablet {
+  @include until($desktop) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.columns.reverse-column-order-when-stacked-desktop {
+  @include until($widescreen) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.column.has-content-vertically-centered {
+  margin-top: auto !important;
+  margin-bottom: auto !important;  
+}
+
+.column.has-content-bottom-aligned {
+  margin-top: auto !important;
+}

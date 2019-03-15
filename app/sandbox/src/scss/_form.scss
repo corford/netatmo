@@ -1,0 +1,30 @@
+// Turn off the recent search in WebKit
+::-webkit-search-decoration {
+  display: none;
+}
+
+// Normalise form field line-height in WebKit
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+select::-webkit-input-placeholder {
+    line-height: normal;
+}
+
+// Make a search box appear like a text box
+input[type=search] {
+  -webkit-appearance: textfield;
+}
+
+// Get rid of outlines
+select {
+  outline: none;
+}
+
+// Make placeholders in Mozilla match thosei in Chrome
+.input,
+.textarea {
+    @include placeholder {
+      color: $placeholder-color;
+      opacity: 1;
+    }
+  }

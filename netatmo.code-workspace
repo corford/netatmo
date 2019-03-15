@@ -1,16 +1,18 @@
-{    
+{
 	"settings": {
-      "python.linting.pylintEnabled": true,
-      "files.eol": "\n",
-      "git.enabled": true
-    },
-    
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.linting.enabled": true,
+		"files.eol": "\n",
+		"git.enabled": true
+	},
+	
 	"folders": [
 		{
-			"path": "devops"
+			"path": "app"
 		},
 		{
-			"path": "webapp"
+			"path": "devops"
 		}
 	]
 }

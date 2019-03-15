@@ -21,11 +21,16 @@ Examples (`cd` to this hack dir before running them):
 
   `sudo ./jwt-tools.sh install`
 
-- To get a dummy JWT auth token for use when calling the app's API
+- To get a dummy JWT auth token for use when calling the app's user API
   endpoints (valid for 1 hour):
   
-  `./jwt-tools.sh create ../../webapp/jwt/dummy/privkey.der`
+  `./jwt-tools.sh token user ../../app/.jwt/dummy/privkey.der`
 
-- To decode a JWT token created with the above `create` command:
+- To get a dummy JWT auth token for use when calling the app's admin API
+  endpoints (valid for 1 hour):
   
-  `./jwt-tools.sh decode ../../webapp/jwt/dummy/pubkey.der`
+  `./jwt-tools.sh token admin ../../app/.jwt/dummy/privkey.der`
+
+- To decode a JWT token created with the above `create` commands:
+  
+  `./jwt-tools.sh decode ../../app/.jwt/dummy/pubkey.der PASTE_YOUR_TOKEN_HERE`

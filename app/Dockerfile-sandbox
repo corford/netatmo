@@ -1,0 +1,47 @@
+# ---- Base stage ----
+FROM ubuntu:18.04 AS base
+LABEL maintainer "Charlie Orford <email+docker@charlie.is>"
+
+RUN apt-get update && apt-get install -y curl git gpg \
+  && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+  && apt-get install -y nodejs
+
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tmp/tini.asc
+RUN mkdir ~/.gnupg && echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf \
+  && gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
+  && gpg --batch --verify /tmp/tini.asc /sbin/tini && chmod +x /sbin/tini
+
+RUN set -x ; \
+  groupadd -g 1001 -r sandbox ; \
+  useradd -u 1001 -r -m -d /opt/sandbox -s /sbin/nologin -g sandbox sandbox && exit 0 ; exit 1
+
+WORKDIR /opt/sandbox
+ENTRYPOINT ["/sbin/tini", "--"]
+COPY --chown=root:sandbox ./sandbox/package.json .
+
+
+# ---- Dependencies stage ----
+
+FROM base AS dependencies
+RUN npm set progress=false && npm config set depth 0
+RUN npm install
+
+
+# ---- Build stage ----
+
+FROM dependencies AS build
+COPY --chown=root:sandbox ./sandbox .
+ARG buildenv
+RUN if [ "$buildenv" != "development" ]; then \
+    npm run build; \
+  fi
+
+
+# ---- Run stage ----
+
+FROM nginx:alpine AS release
+COPY --from=build /opt/sandbox/dist /usr/share/nginx/html
+EXPOSE 3000
+CMD [ "nginx", "-g", "daemon off;" ]

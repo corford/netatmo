@@ -80,6 +80,8 @@
             extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
             action: 'ACCEPT'
 
+    - role: EXT.nodejs
+
   tasks:
     - import_tasks: tasks/git.yml
       tags: git

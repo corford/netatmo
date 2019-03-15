@@ -1,0 +1,5 @@
+{{- $ctx := .ctx -}}
+{{- $class := .class -}}
+{{- $id := .id -}}
+{{- $alt := .alt -}}
+<img class="{{ $class }}" src="{{ $ctx.Site.BaseURL }}assets/image/{{ index $ctx.Site.Data.manifests.images $id }}" alt="{{ $alt }}">
