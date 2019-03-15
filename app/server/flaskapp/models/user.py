@@ -1,4 +1,3 @@
-from flask import current_app as app
 from flaskapp.core.datastore import DataStore
 
 
