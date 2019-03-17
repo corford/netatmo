@@ -201,7 +201,7 @@ find /etc/iptables.d/ipv6 -maxdepth 2 -mindepth 1 -type f -name "*.rules" 2>&1 |
 if $(iptables-restore -t $TMP_IPTABLES_RULES_V4); then
   echo "Applying IPv4 iptables rules..."
   mv ${TMP_IPTABLES_RULES_V4} /etc/iptables/rules.v4
-  iptables-restore -f < /etc/iptables/rules.v4 2> /dev/null
+  iptables-restore -n < /etc/iptables/rules.v4 2> /dev/null
 else
   echo "iptables restore failed (malformed IPv4 rule file):" >&2
   echo "---" >&2
@@ -213,7 +213,7 @@ fi
 if $(ip6tables-restore -t $TMP_IPTABLES_RULES_V6); then
   echo "Applying IPv6 iptables rules..."
   mv ${TMP_IPTABLES_RULES_V6} /etc/iptables/rules.v6
-  ip6tables-restore -f < /etc/iptables/rules.v6 2> /dev/null
+  ip6tables-restore -n < /etc/iptables/rules.v6 2> /dev/null
 else
   echo "iptables restore failed (malformed IPv6 rule file):" >&2
   echo "---" >&2
