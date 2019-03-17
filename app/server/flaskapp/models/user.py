@@ -19,18 +19,24 @@ class User(object):
 
         return True
 
-    def get(self, key):
+    def get(self, key, raise_on_missing=False):
         try:
             value = self._user_data[key]
         except KeyError:
+            if raise_on_missing:
+                raise KeyError(f'User object has no key named "{key}"')
             return None
 
         return value
 
-    def pop(self, key):
+    def pop(self, key, auto_commit=True):
+        if auto_commit:
+            return self.save()
         return self._user_data.pop(key, None)
 
-    def delete(self, key):
+    def delete(self, key, auto_commit=True):
+        if auto_commit:
+            return self.save()
         self._user_data.pop(key, None)
         return True
 

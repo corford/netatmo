@@ -21,12 +21,12 @@ Sitemap:
       </div>
       <div class="column is-3">
         <h4 class="title is-8">Available Tests</h4>
-        <a id="sandbox-test-auth" class="button is-primary">Grant access</a><br><br>
+        <a id="sandbox-test-auth" class="button is-primary">Grant Netatmo access</a><br><br>
         <a id="sandbox-test-list" class="button is-primary">List devices</a><br><br>
-        <a id="sandbox-test-station-device-dashboard-data" class="button is-primary">Get station device dashboard data</a><br>
+        <a id="sandbox-test-station-device-dashboard-data" class="button is-primary">Get station dashboard data</a><br>
         <div class="field">
           <div class="control">
-            <input id="sandbox-station-device-id" class="input" type="text" placeholder="Enter device id you wish to query" style="width: 300px;">
+            <input id="sandbox-station-device-id" class="input" type="text" placeholder="Enter station id you wish to query" style="width: 300px;">
           </div>
         </div>
         <a id="sandbox-test-home-timezone" class="button is-primary">Get home timezone</a><br>
@@ -35,7 +35,7 @@ Sitemap:
             <input id="sandbox-station-home-id" class="input" type="text" placeholder="Enter home id you wish to query" style="width: 300px;">
           </div>
         </div>
-        <a id="sandbox-test-revoke" class="button is-danger">Revoke access</a>
+        <a id="sandbox-test-revoke" class="button is-danger">Revoke Netatmo access</a>
       </div>
       <div class="column is-5">
         <h4 class="title is-8">Activity Log</h4>

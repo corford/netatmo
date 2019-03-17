@@ -7,7 +7,7 @@ from flask import make_response
 
 
 def cacheable(expires=None, public=False):
-    """
+    '''
     Add Flask cache response headers based on expires in seconds.
 
     If expires is None, caching will be disabled. Otherwise, caching headers
@@ -25,26 +25,31 @@ def cacheable(expires=None, public=False):
     def index():
         return render_template('index.html')
 
-    """
+    '''
     def cache_decorator(view):
         @wraps(view)
         def cache_func(*args, **kwargs):
             now = datetime.datetime.utcnow()
 
             response = make_response(view(*args, **kwargs))
+
             response.headers.add(
                 'Last-Modified',
-                format_date_time(time.mktime(now.timetuple())))
+                format_date_time(time.mktime(now.timetuple()))
+            )
 
             if expires is None:
                 response.headers.add(
                     'Expires',
-                    'Fri, 13 Sep 2013 13:13:13 GMT')
+                    'Fri, 13 Sep 2013 13:13:13 GMT'
+                )
+
                 response.headers.add(
                     'Cache-Control',
                     'no-store, no-cache, max-age=0, s-maxage=0, '
                     'must-revalidate, proxy-revalidate, no-transform, '
-                    'post-check=0, pre-check=0')
+                    'post-check=0, pre-check=0'
+                )
 
             else:
                 expires_time = now + datetime.timedelta(seconds=expires)
@@ -53,11 +58,13 @@ def cacheable(expires=None, public=False):
                 response.headers.add(
                     'Cache-Control',
                     f'{privacy_level}, no-transform, '
-                    f'max-age={expires}, s-maxage={expires}')
+                    f'max-age={expires}, s-maxage={expires}'
+                )
 
                 response.headers.add(
                     'Expires',
-                    format_date_time(time.mktime(expires_time.timetuple())))
+                    format_date_time(time.mktime(expires_time.timetuple()))
+                )
 
             return response
         return cache_func

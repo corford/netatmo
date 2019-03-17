@@ -8,8 +8,9 @@ from flask.logging import default_handler
 
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+
 from flaskapp import settings
-from flaskapp.core.error import app_exception_handler
+from flaskapp.core.util import app_exception_handler
 
 
 def create_app():
@@ -23,9 +24,6 @@ def create_app():
         logging.DEBUG if app.debug else app.config['PROD_LOG_LEVEL'])
 
     app.logger.setLevel(logging.DEBUG)
-    root = logging.getLogger()
-    root.addHandler(default_handler)
-    root.setLevel(logging.DEBUG)
 
     # Apply Werkzeug middleware so Flask can correctly deduce
     # the client request environment when behind a proxy
@@ -46,20 +44,22 @@ def create_app():
     JWTManager(app)
 
     # Allow cross origin requests on all endpoints (they will
-    # still need to present a valid JWT to use an endpoint)
+    # still need to present a valid JWT to gain access)
     CORS(app)
 
     # Import views
     from flaskapp.views import auth
-    from flaskapp.views.api import devices_v1
-    from flaskapp.views.api import station_v1
-    from flaskapp.views.api import home_v1
+    from flaskapp.views.api_v1 import manage
+    from flaskapp.views.api_v1 import devices
+    from flaskapp.views.api_v1 import station
+    from flaskapp.views.api_v1 import home
 
     # Register blueprints
     app.register_blueprint(auth.bp, url_prefix='/auth')
-    app.register_blueprint(devices_v1.bp, url_prefix='/api/devices/v1')
-    app.register_blueprint(station_v1.bp, url_prefix='/api/station/v1')
-    app.register_blueprint(home_v1.bp, url_prefix='/api/home/v1')
+    app.register_blueprint(manage.bp, url_prefix='/api/v1/manage')
+    app.register_blueprint(devices.bp, url_prefix='/api/v1/devices')
+    app.register_blueprint(station.bp, url_prefix='/api/v1/station')
+    app.register_blueprint(home.bp, url_prefix='/api/v1/home')
 
     # Register app level error handlers
     app.register_error_handler(HTTPException, app_exception_handler)

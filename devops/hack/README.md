@@ -12,8 +12,8 @@ on signed JWTs for authorization (with the requirement that the value of the 'su
 field in the token's payload is guaranteed to be a unique string for each app user).
 
 To aid with development (when an actual authentication service may not be
-available to issue real JWT auth tokens), use the `jwt-tools.sh` script
-to create a mock auth token which only works in dev/debug mode.
+available to issue real JWT auth tokens), use the `jwt-tools.sh` script to
+create a mock auth token for use against the app's endpoints.
 
 Examples (`cd` to this hack dir before running them):
 

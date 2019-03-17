@@ -17,8 +17,10 @@ bp = Blueprint('auth', __name__)
 @bp.route('/grant', methods=['GET'])
 @jwt_optional
 def grant():
-    authT_endpoint = 'https://api.netatmo.com/oauth2/authorize'
-    authZ_endpoint = 'https://api.netatmo.com/oauth2/token'
+    endpoint = {
+        'authN': 'https://api.netatmo.com/oauth2/authorize',
+        'authZ': 'https://api.netatmo.com/oauth2/token'
+    }
 
     # Look for JWT token
     jwt_identity = get_jwt_identity()
@@ -32,7 +34,7 @@ def grant():
     # Bail (either user wrongly called this endpoint without a JWT or
     # the cookie expired before Netatmo redirected back here)
     else:
-        return ('<h1>Error: we could not identify you</h1>')
+        return ('<h1>Error: we could not identify you</h1>', 501)
 
     app.logger.debug(
         'Handling Netatmo account grant flow for user: %s',
@@ -41,16 +43,16 @@ def grant():
     # User declined to grant access to their Netatmo account
     if r.args.get('error') == 'access_denied':
         return ('<h1>Error: you chose not to grant access to your Netatmo '
-                'account</h1>')
+                'account</h1>', 403)
 
     # Netatmo API replied with an error (most likely due to malformed
     # or missing url params)
     elif r.args.get('error'):
-        return ('<h1>Uh-oh. An error occurred while calling the '
-                'Netatmo API (%s). Sorry.</h1>', r.args.get('error'))
+        return ('<h1>Uh-oh. An error occurred while accessing '
+                'your Netatmo account. Sorry.</h1>', 500)
 
     # User has authenticated with Netatmo and granted access to their account.
-    # Now we need to ollect the access and refresh tokens.
+    # Now we need to collect the access and refresh tokens.
     elif r.args.get('code') and user.get('refresh_token') is None:
         if r.args.get('state') == user.get('csrf'):
             code = r.args.get('code')
@@ -63,38 +65,45 @@ def grant():
                 'scope': ' '.join(app.config['NETATMO_SCOPES'])
                 }
             try:
-                response = requests.post(authZ_endpoint, data=payload)
+                response = requests.post(
+                    endpoint['authZ'],
+                    data=payload,
+                    timeout=5
+                    )
+
                 response.raise_for_status()
-
-                user.set(
-                    'access_token',
-                    response.json()['access_token'],
-                    auto_commit=False)
-
-                user.set(
-                    'refresh_token',
-                    response.json()['refresh_token'],
-                    auto_commit=False)
-
-                user.set(
-                    'scope',
-                    response.json()['scope'],
-                    auto_commit=False)
-
-                user.save()
-
-                return ('<h1>Success! You have granted us access to your '
-                        'Netatmo account (you may now close this window)</h1>')
 
             except requests.exceptions.HTTPError as err:
                 app.logger.info(
-                    'Error while requesting netatmo tokens for user: %s (%s)',
+                    'Error requesting netatmo tokens for user: %s (%s)',
                     err.response.text,
                     err.response.status_code)
-                return ('<h1>Uh-oh. An error occurred while accessing '
-                        'your Netatmo account. Sorry.</h1>')
+                return ('<h1>Uh-oh. An error occurred while requesting access '
+                        'to your Netatmo account. Sorry.</h1>', 500)
+
+            user.set(
+                'access_token',
+                response.json()['access_token'],
+                auto_commit=False)
+
+            user.set(
+                'refresh_token',
+                response.json()['refresh_token'],
+                auto_commit=False)
+
+            user.set(
+                'scope',
+                response.json()['scope'],
+                auto_commit=False)
+
+            user.save()
+
+            return ('<h1>Success! You have granted us access to your '
+                    'Netatmo account (you may now close this window)</h1>',
+                    200)
+
         else:
-            return '<h1>Request ignored (invalid state)</h1>'
+            return ('<h1>Request ignored (invalid state)</h1>', 400)
 
     # Begin the authentication flow if user has not already granted
     # us access to their Netatmo account
@@ -109,20 +118,26 @@ def grant():
         user.set('csrf', payload['state'])
 
         try:
-            response = requests.post(authT_endpoint, params=payload)
-            response.raise_for_status()
+            response = requests.post(
+                endpoint['authN'],
+                params=payload,
+                timeout=5
+                )
 
-            # Set a short lived cookie so we can identify the user when they
-            # get redirected back after authenticating with Netatmo
-            resp = make_response(redirect(response.url, code=302))
-            resp.set_cookie('jwt_identity', user.id, max_age=90, httponly=True)
-            return resp
+            response.raise_for_status()
 
         except requests.exceptions.HTTPError:
             return ('<h1>Uh-oh. An error occurred while attempting '
-                    'to authenticate with Netatmo. Sorry.</h1>')
+                    'to authenticate with Netatmo. Sorry.</h1>', 500)
+
+        # Set a short lived cookie so we can identify the user when they
+        # get redirected back after authenticating with Netatmo
+        resp = make_response(redirect(response.url, code=302))
+        resp.set_cookie('jwt_identity', user.id, max_age=180, httponly=True)
+
+        return resp
 
     # Do nothing (user has already granted access to their Netatmo acount)
     else:
         return ('<h1>Hmmm. You have already granted us access '
-                'to your Netatmo account.</h1>')
+                'to your Netatmo account.</h1>', 200)

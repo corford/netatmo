@@ -20,7 +20,7 @@ export class Sandbox {
     });
 
     document.getElementById('sandbox-test-revoke').addEventListener('click', event => {
-      this._revokeAccess(this._getServer(), this._getJWT());
+      this._revoke(this._getServer(), this._getJWT());
     });
 
     document.getElementById('sandbox-clear').addEventListener('click', event => {
@@ -38,39 +38,37 @@ export class Sandbox {
   }
 
   _grant(server, jwt) {
-    this._log(`request access`);
+    this._log(`request netatmo account access`);
     window.open(`${server}/auth/grant?jwt=${jwt}`, 'sandbox-grant');
   }
 
   _getDevices(server, jwt) {
-    this._showLoader();
     this._log(`request devices`);
+    this._showLoader();
 
-    wretch(`${server}/api/devices/v1/list`)
+    wretch(`${server}/api/v1/devices/list`)
     .auth(`Bearer ${jwt}`)
     .get()
     .json(json => {
       this._log(JSON.stringify(json));
+      this._hideLoader();      
     })
-  
-    this._hideLoader();
   }
 
   _getStationDeviceDashboardData(server, jwt) {
+    const device_id = document.getElementById('sandbox-station-device-id').value;
+
+    this._log(`get dashboard data for station device: ${device_id}`);
     this._showLoader();
 
-    const device_id = document.getElementById('sandbox-station-device-id').value;
-    this._log(`get dashboard data for station device: ${device_id}`);
-
-    wretch(`${server}/api/station/v1/dashboard-data`)
+    wretch(`${server}/api/v1/station/dashboard-data`)
     .auth(`Bearer ${jwt}`)
     .query({'device_id': device_id})
     .get()
     .json(json => {
       this._log(JSON.stringify(json));
+      this._hideLoader();
     })
-
-    this._hideLoader();
   }
   
   _getHomeTimezone(server, jwt) {
@@ -79,22 +77,27 @@ export class Sandbox {
     const home_id = document.getElementById('sandbox-station-home-id').value;
     this._log(`get timezone data for home: ${home_id}`);
 
-    wretch(`${server}/api/home/v1/timezone`)
+    wretch(`${server}/api/v1/home/timezone`)
     .auth(`Bearer ${jwt}`)
     .query({'home_id': home_id})
     .get()
     .json(json => {
       this._log(JSON.stringify(json));
+      this._hideLoader();
     })
-
-    this._hideLoader();
   }
   
-  _revokeAccess(server, jwt) {
+  _revoke(server, jwt) {
     this._showLoader();
-    this._log(`revoke access`);
+    this._log(`revoke netatmo account access`);
 
-    this._hideLoader();
+    wretch(`${server}/api/v1/manage/revoke`)
+    .auth(`Bearer ${jwt}`)
+    .get()
+    .json(json => {
+      this._log(JSON.stringify(json));
+      this._hideLoader();
+    })
   }
 
   _log(msg) {

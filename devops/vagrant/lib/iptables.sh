@@ -62,6 +62,11 @@ cat << "EOF" > /etc/iptables.d/ipv4/40_filter/00_header.rules
 :INPUT DROP
 :FORWARD DROP
 :OUTPUT DROP
+:FILTERS -
+:DOCKER-USER -
+-F INPUT
+-F DOCKER-USER
+-F FILTERS
 EOF
 echo "COMMIT" > /etc/iptables.d/ipv4/40_filter/99_footer.rules
 
@@ -109,6 +114,11 @@ cat << "EOF" > /etc/iptables.d/ipv6/40_filter/00_header.rules
 :INPUT DROP
 :FORWARD DROP
 :OUTPUT DROP
+:FILTERS -
+:DOCKER-USER -
+-F INPUT
+-F DOCKER-USER
+-F FILTERS
 EOF
 echo "COMMIT" > /etc/iptables.d/ipv6/40_filter/99_footer.rules
 
@@ -125,9 +135,10 @@ cat << "EOF" > /etc/iptables.d/ipv4/40_filter/10_default.rules
 # Default traffic flow rules
 -A INPUT -i lo -j ACCEPT
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
--A OUTPUT -j ACCEPT
-# Respond to ping
 -A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+-A INPUT -j FILTERS
+-A DOCKER-USER -i eth1 -j FILTERS
+-A OUTPUT -j ACCEPT
 EOF
 
 # IPv4: Write SSH rules
@@ -136,7 +147,7 @@ cat << "EOF" > /etc/iptables.d/ipv4/30_mangle/20_ssh.rules
 -A POSTROUTING -p tcp -m tcp --dport 22 -j TOS --set-tos 0x10/0x3f
 EOF
 cat << "EOF" > /etc/iptables.d/ipv4/40_filter/20_ssh.rules
--A INPUT -p tcp -m tcp --dport 22 --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -j ACCEPT
+-A FILTERS -p tcp -m tcp --dport 22 --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW -j ACCEPT
 EOF
 
 # IPv6: Write default "filter" table rules
@@ -190,7 +201,7 @@ find /etc/iptables.d/ipv6 -maxdepth 2 -mindepth 1 -type f -name "*.rules" 2>&1 |
 if $(iptables-restore -t $TMP_IPTABLES_RULES_V4); then
   echo "Applying IPv4 iptables rules..."
   mv ${TMP_IPTABLES_RULES_V4} /etc/iptables/rules.v4
-  iptables-restore < /etc/iptables/rules.v4 2> /dev/null
+  iptables-restore -f < /etc/iptables/rules.v4 2> /dev/null
 else
   echo "iptables restore failed (malformed IPv4 rule file):" >&2
   echo "---" >&2
@@ -202,7 +213,7 @@ fi
 if $(ip6tables-restore -t $TMP_IPTABLES_RULES_V6); then
   echo "Applying IPv6 iptables rules..."
   mv ${TMP_IPTABLES_RULES_V6} /etc/iptables/rules.v6
-  ip6tables-restore < /etc/iptables/rules.v6 2> /dev/null
+  ip6tables-restore -f < /etc/iptables/rules.v6 2> /dev/null
 else
   echo "iptables restore failed (malformed IPv6 rule file):" >&2
   echo "---" >&2
