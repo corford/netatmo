@@ -39,7 +39,7 @@ function do_install ()
 function do_create_token ()
 {
   if [ ! -f "${2}" ]; then
-    echo "Error generating token (could not find private key: ${1})"
+    echo "Error generating token (could not find private key: ${2})"
   else
     if [ "${1}" = "admin" ]; then
       jwt-cli encode -A RS256 -S @"${2}" -e $(date --date="1hour" +%s) -i "AuthN" -s "admin" '{"aud":"server:flaskapp", "admin":true}'

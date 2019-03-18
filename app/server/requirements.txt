@@ -6,7 +6,7 @@ python-dotenv>=0.10.1
 jwt>=0.6.1
 flask_jwt_extended[asymmetric_crypto]
 requests>=2.21.0 
-gunicorn>=19.9.0
+gunicorn[gevent]>=19.9.0
 # Note: Don't install hiredis (we're using green threads/gevent in prod
 # and can't monkeypatch a C extension to be non-blocking)
 redis>=3.2.0

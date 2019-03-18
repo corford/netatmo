@@ -18,15 +18,15 @@ RUN set -x ; \
   useradd -u 1001 -r -m -d /opt/sandbox -s /sbin/nologin -g sandbox sandbox && exit 0 ; exit 1
 
 WORKDIR /opt/sandbox
+USER sandbox
 ENTRYPOINT ["/sbin/tini", "--"]
-COPY --chown=root:sandbox ./sandbox/package.json .
 
 
 # ---- Dependencies stage ----
 
 FROM base AS dependencies
-RUN npm set progress=false && npm config set depth 0
-RUN npm install
+COPY --chown=root:sandbox ./sandbox/package.json .
+RUN npm set progress=false && npm config set depth 0 && npm install
 
 
 # ---- Build stage ----

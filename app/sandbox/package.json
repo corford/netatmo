@@ -9,13 +9,14 @@
   "main": "index.js",
   "scripts": {
     "hugo": "node_modules/.bin/hugo --source site/",
-    "build": "NODE_ENV='production' gulp build",
-    "build-preview": "NODE_ENV='production' gulp build-preview",
-    "start": "NODE_ENV='development' DEBUG='true' gulp server",
-    "start-preview": "NODE_ENV='development' DEBUG='true' gulp server-preview",
+    "build": "NODE_ENV='production' node_modules/.bin/gulp build",
+    "build-preview": "NODE_ENV='production' node_modules/.bin/gulp build-preview",
+    "start": "NODE_ENV='development' DEBUG='true' node_modules/.bin/gulp server",
+    "start-preview": "NODE_ENV='development' DEBUG='true' node_modules/.bin/gulp server-preview",
     "lint": "eslint src"
   },
   "author": "Charlie Orford <email+github@charlie.is>",
+  "license": "MIT",
   "browserslist": [
     "last 2 versions",
     "> 0.5%",
