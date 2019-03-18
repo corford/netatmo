@@ -25,19 +25,26 @@ intructions in the README and then issue `vagrant up`.
 
 3. Once the vagrant box is provisioned, SSH in to it and run:
 
-`cd /opt/gitrepos/netatmo/app`
-`sudo /opt/gitrepos/netatmo/devops/hack/docker-tools.sh`
-`sudo /opt/gitrepos/netatmo/devops/hack/jwt-tools.sh install`
-`cat << "EOF" > /opt/gitrepos/netatmo/app/server/.env
+```
+cd /opt/gitrepos/netatmo/app
+
+sudo /opt/gitrepos/netatmo/devops/hack/docker-tools.sh
+
+sudo /opt/gitrepos/netatmo/devops/hack/jwt-tools.sh install
+
+cat << "EOF" > /opt/gitrepos/netatmo/app/server/.env
 NETATMO_CLIENT_ID="<your client id>"
 NETATMO_CLIENT_SECRET="<your client secret>"
 SECRET_KEY="<random secret string for use by Flask when signing cookies>"
-EOF`
-`chmod 600 /opt/gitrepos/netatmo/app/server/.env`
-`sudo docker-compose up --build`
+EOF
+
+chmod 600 /opt/gitrepos/netatmo/app/server/.env
+
+sudo docker-compose up --build
+```
 
 The Flask server is available on port 5000 of your vagrant box.
-The JAMStack Sandbox is available on port 3000 of your vagrant box.
+The API Sandbox is available on port 3000 of your vagrant box.
 
 ## Using the API
 
