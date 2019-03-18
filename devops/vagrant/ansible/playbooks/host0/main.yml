@@ -62,7 +62,7 @@
 
 
     - role: iptables
-      tags: www
+      tags: wwww
       iptables_unit:
         suffix: "sandbox"
         rules:
@@ -85,6 +85,8 @@
             dport: 5000
             extra: '-m tcp --tcp-flags FIN,SYN,RST,ACK SYN -m conntrack --ctstate NEW'
             action: 'ACCEPT'
+
+    - role: EXT.redis-multi
 
     - role: EXT.nodejs
 

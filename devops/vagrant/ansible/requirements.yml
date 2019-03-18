@@ -7,6 +7,10 @@
   version: master
   name: EXT.docker
 
+- src: https://github.com/corford/ansible-role-redis-multi-instance
+  version: master
+  name: EXT.redis-multi
+
 - src: https://github.com/corford/ansible-role-nodejs
   version: master
   name: EXT.nodejs
