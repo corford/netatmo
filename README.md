@@ -9,11 +9,12 @@ a wider system through JWT authorized endpoints.
 ## Featured tech & concepts:
 
 - Key based JWT auth (with support for mock tokens during dev/testing)
-- Gevented non-blocking Flask server (written in modern python3.7 code)
+- Gevented non-blocking Flask server (with modern python3.7 code, inline
+  token refresh and pluggable storage backend)
 - Optional Docker workflow (dev and prod containers, multi-stage builds)
 - Vagrant + Ansible (for clean, cross-platform dev machine provisioning)
 - Simple JAMStack inspired API Sandbox (to make playing with the Flask
-  server's endpoints easy)
+  server's auth flow and API endpoints quick & easy)
 
 ## Install / How to run
 
