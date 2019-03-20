@@ -37,8 +37,7 @@ def list_devices():
     }
 
     payload = {
-        'access_token':
-        user.get('access_token')
+        'access_token': user.get('access_token')
     }
 
     result = []
