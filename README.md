@@ -6,15 +6,15 @@ performance micro-service in Python with the Flask framework.
 This demo wraps some of the Netatmo APIs (including AuthN) and presents it to
 a wider system through JWT authorized endpoints.
 
-## Featured tech & concepts:
+## Features / Concepts:
 
 - Key based JWT auth (with support for mock tokens during dev/testing)
 - Gevented non-blocking Flask server (with modern python3.7 code, inline
   token refresh and pluggable storage backend)
 - Optional Docker workflow (dev and prod containers, multi-stage builds)
 - Vagrant + Ansible (for clean, cross-platform dev machine provisioning)
-- Simple JAMStack inspired API Sandbox (to make playing with the Flask
-  server's auth flow and API endpoints quick & easy)
+- Simple JAMStack inspired API Sandbox (to make playing with the Netatmo's
+  auth flow and the flask sever's API endpoints easy)
 
 ## Install / How to run
 
@@ -54,5 +54,5 @@ one via a helper script:
 
 `/opt/gitrepos/netatmo/devops/hack/jwt-tools.sh token user .jwt/dummy/privkey.der`
 
-Once you have a token, use either curl or the Sandbox to start playing with the
+Once you have a token, use either curl or the sandbox to start playing with the
 exposed endpoints.
