@@ -3,7 +3,7 @@
 Demo repo illustrating a full stack approach to building and running a high
 performance micro-service in Python with the Flask framework.
 
-This demo wraps some of the Netatmo APIs (including AuthT) and presents it to
+This demo wraps some of the Netatmo APIs (including AuthN) and presents it to
 a wider system through JWT authorized endpoints.
 
 ## Featured tech & concepts:
