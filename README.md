@@ -13,8 +13,8 @@ a wider system through JWT authorized endpoints.
   storage backend and automatic server-side refresh for upstream access tokens)
 - Optional Docker workflow (dev and prod containers, multi-stage builds)
 - Vagrant + Ansible (for clean, cross-platform dev machine provisioning)
-- Simple JAMStack inspired API Sandbox (to make playing with the Netatmo's
-  auth flow and the flask sever's API endpoints easy)
+- Simple JAMStack inspired API Sandbox (to make playing with Netatmo's auth
+  flow and the Flask server API endpoints easy)
 
 ## Install / How to run
 
